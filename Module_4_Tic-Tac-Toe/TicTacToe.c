@@ -1,10 +1,10 @@
 // TacTacToe solution checker by Chip Henderson for SMU CS7343
 
 
-// #include <pthread.h> /* Need to reneable this when compiling for linux, disable for Windows */
+#include <pthread.h> /* Need to reneable this when compiling for linux, disable for Windows */
 #include <stdio.h>
 #include <stdlib.h>
-// #define num_threads = 9 /* Stop gap solution until multithread version is ready */
+// #define num_threads == 7 /* Stop gap solution until multithread version is ready */
 int num_threads = 7;
 
 char gameBoard[9];
