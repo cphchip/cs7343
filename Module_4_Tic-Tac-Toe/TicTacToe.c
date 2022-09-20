@@ -1,7 +1,7 @@
 // TacTacToe solution checker by Chip Henderson for SMU CS7343
 
 
-// #include <pthread.h> /* Need to reneable this when compiling for linux */
+// #include <pthread.h> /* Need to reneable this when compiling for linux, disable for Windows */
 #include <stdio.h>
 #include <stdlib.h>
 // #define num_threads = 9 /* Stop gap solution until multithread version is ready */
@@ -98,12 +98,12 @@ int main()
     }
         
     if (solutionSum == 0) {
-        printf("\nThere is no winner!");
+        printf("\nThere is no winner!\n");
     }
     else if (solutionSum % 88 == 0) {
-        printf("\nWinner is X!");
+        printf("\nWinner is X!\n");
     }
-    else printf("\nWinner is O!");
+    else printf("\nWinner is O!\n");
     
     return 0;
 }
