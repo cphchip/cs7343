@@ -3,8 +3,8 @@
 #include <pthread.h> /* Need to reneable this when compiling for linux, disable for Windows */
 #include <stdio.h>
 #include <stdlib.h>
-// #define num_threads == 7 /* Stop gap solution until multithread version is ready */
-int num_threads = 7;
+#define num_threads 3 /* Stop gap solution until multithread version is ready */
+// int num_threads = 7;
 
 char gameBoard[9];
 // int solutionArray[num_threads]
@@ -108,20 +108,31 @@ int main()
 //    Multithreaded section
    intro();
    
-   pthread_t tid = 0;
-//    int tIndex = 0;
+//    pthread_t tid = 0;
+   pthread_t tid[num_threads];
+   int tIndex = 0;
    pthread_attr_t attr;
 
    pthread_attr_init(&attr);
 
-   pthread_create(&tid, &attr, rowCheck, NULL);
-   pthread_create(&tid, &attr, columnCheck, NULL);
-   pthread_create(&tid, &attr, diagCheck, NULL);
-   pthread_join(tid,NULL);
+//    pthread_create(&tid, &attr, rowCheck, NULL);
+//    pthread_create(&tid, &attr, columnCheck, NULL);
+//    pthread_create(&tid, &attr, diagCheck, NULL);
+   
+   pthread_create(&tid[tIndex++], &attr, rowCheck, NULL);
+   pthread_create(&tid[tIndex++], &attr, columnCheck, NULL);
+   pthread_create(&tid[tIndex++], &attr, diagCheck, NULL);
+
+    int j;
+    for (j = 0; j < num_threads; j++) {
+
+        pthread_join(tid[j],NULL);
+
+    }
 
     int i;
     int solutionSum = 0;
-    for (i = 0; i < num_threads; i++) {
+    for (i = 0; i < 7; i++) {
         solutionSum += solutionArray[i];
     }
         
