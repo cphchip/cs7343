@@ -78,11 +78,10 @@ int main()
 
    pthread_attr_init(&attr);
 
-   pthread_create(&tid[tIndex++], &attr, rowCheck, NULL);
-   pthread_create(&tid[tIndex++], &attr, columnCheck, NULL);
-   pthread_create(&tid[tIndex++], &attr, diagCheck, NULL);
+   pthread_create(&tid[0], &attr, rowCheck, NULL);
+   pthread_create(&tid[1], &attr, columnCheck, NULL);
+   pthread_create(&tid[2], &attr, diagCheck, NULL);
    
-
     int j;
     for (j = 0; j < NUM_THREADS; j++) {
 
@@ -90,10 +89,9 @@ int main()
 
     }
 
-    int i;
     int solutionSum = 0;
+    int i;
     for (i = 0; i < 7; i++) {
-        printf("\n%d", solutionArray[i]); // This is a debug statement
         solutionSum += solutionArray[i];
     }
         
