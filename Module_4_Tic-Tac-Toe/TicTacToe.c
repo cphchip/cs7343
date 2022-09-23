@@ -1,6 +1,5 @@
 // TacTacToe solution checker by Chip Henderson for SMU CS7343
 
-
 #include <pthread.h> /* Need to reneable this when compiling for linux, disable for Windows */
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,16 +8,15 @@ int num_threads = 7;
 
 char gameBoard[9];
 // int solutionArray[num_threads]
-int solutionArray[8];
+// int solutionArray[8];
+int solutionArray[7];
 // Note: solution array consists of row, row, row, column, column, column, diag, diag
 char winner;
 
-/* structure for passing data to threads. This needs to be reenabled for Linux */
-
-typedef struct {
-    int row;
-    int column;
-} parameters;
+// typedef struct {
+//     int row;
+//     int column;
+// } parameters;
 
 void intro()
 {
@@ -30,7 +28,7 @@ void intro()
 
 }
 
-void rowCheck ()
+void *rowCheck ()
 {
     int i = 0;
     int j;
@@ -47,7 +45,7 @@ void rowCheck ()
     }
 }
 
-void columnCheck()
+void *columnCheck()
 {
     int i = 3;
     int j;
@@ -64,7 +62,7 @@ void columnCheck()
     }
 }
 
-void diagCheck()
+void *diagCheck()
 {
 /*Note: I think it may be possible to get by with only one diagonal result. Will check later.*/
     int i;
@@ -86,6 +84,7 @@ void diagCheck()
 
 int main()
 {
+    /* Note: This section works single threaded...
     intro();
     rowCheck();
     columnCheck();
@@ -104,15 +103,37 @@ int main()
         printf("\nWinner is X!\n");
     }
     else printf("\nWinner is O!\n");
-    
+    */
+
+//    Multithreaded section
+   intro();
+   
+   pthread_t tid = 0;
+//    int tIndex = 0;
+   pthread_attr_t attr;
+
+   pthread_attr_init(&attr);
+
+   pthread_create(&tid, &attr, rowCheck, NULL);
+   pthread_create(&tid, &attr, columnCheck, NULL);
+   pthread_create(&tid, &attr, diagCheck, NULL);
+   pthread_join(tid,NULL);
+
+    int i;
+    int solutionSum = 0;
+    for (i = 0; i < num_threads; i++) {
+        solutionSum += solutionArray[i];
+    }
+        
+    if (solutionSum == 0) {
+        printf("\nThere is no winner!\n");
+    }
+    else if (solutionSum % 88 == 0) {
+        printf("\nWinner is X!\n");
+    }
+    else printf("\nWinner is O!\n");
+
+    pthread_exit(NULL);
+
     return 0;
 }
-// parameters *data = (parameters *) malloc(sizeof(parameters));
-
-// data->row = 1;
-
-// data->column = 1;
-
- 
-
-// /* Now create the thread passing it data as a parameter */
