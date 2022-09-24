@@ -6,7 +6,7 @@
 #define NUM_THREADS 3 
 
 char gameBoard[8]; 
-int solutionArray[6]; // consists of row, row, row, col, col, col, diag 
+int solutionArray[7]; // consists of row, row, row, col, col, col, diag 
 
 void intro() //Welcomes user and sets up the game with user input
 {
