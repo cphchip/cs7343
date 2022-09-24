@@ -93,28 +93,16 @@ int main()
     int solutionSum = 0;
     int i;
     for (i = 0; i < 7; i++) {
-        solutionSum += solutionArray[i];
-
-        if (solutionArray[i] != 0)
-        {
-            printf("\nThe winner is %c!", solutionArray[i]);
-            break;
-        }
-
-        else
-        {
-            printf("\nThere is no winner!\n");
-        }
-              
+        solutionSum += solutionArray[i];              
     }
         
-    // if (solutionSum == 0) {
-    //     printf("\nThere is no winner!\n");
-    // }
-    // else if (solutionSum == 88) {
-    //     printf("\nWinner is X!\n");
-    // }
-    // else printf("\nWinner is O!\n");
+    if (solutionSum == 0) {
+        printf("\nThere is no winner!\n");
+    }
+    else if (solutionSum == 88) {
+        printf("\nWinner is X!\n");
+    }
+    else printf("\nWinner is O!\n");
 
     pthread_exit(NULL);
 
