@@ -5,10 +5,10 @@
 #include <stdlib.h>
 #define NUM_THREADS 3 
 
-char gameBoard[9];
-int solutionArray[7];
+char gameBoard[8]; // Originally had this set to 9, not sure if that was causing problem. There are only 9 spaces total, 0 included. So 8 is appropriate.
+int solutionArray[6]; // Note I reduced the array by one because 7 was never used
+// Somehow reducing the two values above by 1 each resolved the problem of occaisional incorrect results for columns
 // Note: solution array consists of row, row, row, column, column, column, diag, diag
-char winner;
 
 void intro()
 {
@@ -23,9 +23,9 @@ void intro()
 void *rowCheck()
 {
     int i = 0;
-    int j;
+    int j = 0;
     
-    for (j = 0; j < 10; j+=3)
+    for (j = 0; j < 7; j+=3)
     {
         if (gameBoard[j] == gameBoard[j + 1] && gameBoard[j + 1] == gameBoard[j + 2]) {
             solutionArray[i] = gameBoard[j];
@@ -40,7 +40,7 @@ void *rowCheck()
 void *columnCheck()
 {
     int i = 3;
-    int j;
+    int j = 0;
     
     for (j = 0; j < 3; j++)
     {
