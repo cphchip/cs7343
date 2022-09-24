@@ -5,10 +5,13 @@
 #include <stdlib.h>
 #define NUM_THREADS 3 
 
-char gameBoard[8]; // Originally had this set to 9, not sure if that was causing problem. There are only 9 spaces total, 0 included. So 8 is appropriate.
-int solutionArray[6]; // Note I reduced the array by one because 7 was never used
-// Somehow reducing the two values above by 1 each resolved the problem of occaisional incorrect results for columns
-// Note: solution array consists of row, row, row, column, column, column, diag, diag
+char gameBoard[8]; 
+int solutionArray[6]; // consists of row, row, row, col, col, col, diag 
+
+/* 
+    Somehow reducing the two values above by 1 each resolved the problem of occaisional
+    incorrect results for columns
+*/
 
 void intro()
 {
@@ -17,7 +20,6 @@ void intro()
 
     gets(gameBoard);
     printf( "\nYou entered: %s", gameBoard);
-
 }
 
 void *rowCheck()
@@ -56,7 +58,6 @@ void *columnCheck()
 
 void *diagCheck()
 {
-
     if (gameBoard[0] == gameBoard[4] && gameBoard[4] == gameBoard[8]) {
         solutionArray[6] = gameBoard[4];
     }
@@ -93,15 +94,27 @@ int main()
     int i;
     for (i = 0; i < 7; i++) {
         solutionSum += solutionArray[i];
+
+        if (solutionArray[i] != 0)
+        {
+            printf("\nThe winner is %c!", solutionArray[i]);
+            break;
+        }
+
+        else
+        {
+            printf("\nThere is no winner!\n");
+        }
+              
     }
         
-    if (solutionSum == 0) {
-        printf("\nThere is no winner!\n");
-    }
-    else if (solutionSum % 88 == 0) {
-        printf("\nWinner is X!\n");
-    }
-    else printf("\nWinner is O!\n");
+    // if (solutionSum == 0) {
+    //     printf("\nThere is no winner!\n");
+    // }
+    // else if (solutionSum == 88) {
+    //     printf("\nWinner is X!\n");
+    // }
+    // else printf("\nWinner is O!\n");
 
     pthread_exit(NULL);
 
