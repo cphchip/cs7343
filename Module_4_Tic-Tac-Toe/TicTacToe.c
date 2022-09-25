@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #define NUM_THREADS 3 
 
-char gameBoard[8]; 
+char gameBoard[9]; 
 int solutionArray[7]; // consists of row, row, row, col, col, col, diag 
 
 void intro() //Welcomes user and sets up the game with user input
