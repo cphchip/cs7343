@@ -70,7 +70,6 @@ int main()
    
     // Setup the threads
     pthread_t tid[NUM_THREADS];
-    int tIndex = 0;
     pthread_attr_t attr;
 
     pthread_attr_init(&attr);
