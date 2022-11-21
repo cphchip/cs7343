@@ -4,7 +4,12 @@ import random
 
 def randomGen(qty: int) -> array:
     randomNumbs = np.random.randint(0,10,size=qty)
-    print(randomNumbs)
+    # indexArray = np.arange(0, qty, 1)
+    # print(indexArray)
+    # print(randomNumbs)
+    # randomNumbs = np.vstack((indexArray, randomNumbs))
+
+    # print(randomNumbs[1][0]) #debug test
     return randomNumbs
 
 def fifoTest(testNumbs: array) -> int:
@@ -21,45 +26,68 @@ def fifoTest(testNumbs: array) -> int:
 
 def scanTest(testNumbs: array) -> int:
     i = 0
-    j = 0
+    j = 1
     traversedTracksScan = 0
-    passedTracks = []
 
-    secondPass = np.empty(1, dtype=int)
-    # print(secondPass)
+    # Create a copy of the original array for fairness assessment
+    fifoArray = np.copy(testNumbs)
 
+    # Put first number in array into list
+    scanTracksList = []
+    scanTracksList.append(testNumbs[i])
 
-    while i < testNumbs.size - 1: 
+    # For every subsequent number higher than or equal to current, add it to the list
+    while j < testNumbs.size - 1:
         currentTrack = testNumbs[i]
-        nextTrack = testNumbs[i + 1]
-         
-        # something = len(passedTracks)        
+        nextTrack = testNumbs[j]
+    
+        if nextTrack >= currentTrack:
+            scanTracksList.append(nextTrack)
+            testNumbs = np.delete(testNumbs, i)
+            i = j - 1
+        else:
+            j += 1
 
-        if nextTrack > currentTrack:
-            traversedTracksScan = nextTrack - currentTrack
-            # testNumbs = np.delete(testNumbs,i)
-            i += 1
-            # j += 1
-        elif nextTrack <= currentTrack:
-            # np.insert(secondPass, int, nextTrack)
-            # secondPass[j] = nextTrack
-            passedTracks.append(nextTrack)
-            testNumbs = np.delete(testNumbs,i+1)
-        
-        secondPass = np.array(passedTracks)
-        secondPass.sort()
+    testNumbs = np.delete(testNumbs, i)
 
-    # Can I do this just by sorting the remaining array for the backward pass?
-    # testNumbs.sort()
-    i = secondPass.size - 1
-    while i > -1:
-        currentTrack = secondPass[i]
-        nextTrack = secondPass[i - 1]
-        
+    # Sort remaining values in reverse order for Scan method
+    testNumbs.sort()
+    testNumbs = testNumbs[::-1]
+
+    i = 0    
+    # Append remaining items to the list
+    while i < testNumbs.size:
+        scanTracksList.append(testNumbs[i])
+        i += 1 
+    
+    # Refresh the original array with the new list in Scan order
+    testNumbs = np.array(scanTracksList)
+    
+    i = 0
+    fairnessTest = 0
+    while i < testNumbs.size - 1:
+        currentTrack = testNumbs[i]
+        nextTrack = testNumbs[i+1]
+
         traversedTracksScan = traversedTracksScan + abs(nextTrack - currentTrack)
 
-        i -= 1
+        i += 1
 
+    i = 0
+    j = 0
+    fairness = 0
+
+    # Can't figure out a good way to measure fairness with respect to repeats
+    while i < fifoArray.size:
+        while j < testNumbs.size:
+            if fifoArray[i] == testNumbs[j]:
+                fairness = fairness + j - i
+                break
+            j += 1
+        i += 1
+        j = 0
+
+    print(fairness)
     return traversedTracksScan
 
 
