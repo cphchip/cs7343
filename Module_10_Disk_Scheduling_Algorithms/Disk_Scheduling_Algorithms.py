@@ -7,10 +7,24 @@ def randomGen(qty: int) -> array:
     print(randomNumbs)
     return randomNumbs
 
-def fairnessTest(initArray: array, testArray: array) -> int:
-    indexArray = np.arange(0, testArray.size, 1)
-    testArray = np.vstack((indexArray, testArray))
+def fairnessTest(initArray: array, testArray: array) -> tuple:
+    i = 0
+    traversedTracksScan = 0
+    while i < testArray.size / 2 - 1:
+        currentTrack = testArray[1, i]
+        nextTrack = testArray[1, i+1]
 
+        traversedTracksScan = traversedTracksScan + abs(nextTrack - currentTrack)
+
+        i += 1
+
+    fairnessScore = 0
+    i = 0
+    while i < initArray.size / 2 - 1:
+        fairnessScore = fairnessScore + testArray[0,i] - initArray[0,i]
+        i += 1
+
+    return traversedTracksScan, fairnessScore
 
 def fifoTest(fifoTestArray: array) -> int:
     i = 0
@@ -24,182 +38,85 @@ def fifoTest(fifoTestArray: array) -> int:
 
     return traversedTracksFifo
 
-def scanTest(scanTestArray: array) -> int:
+def scanTest(fifoArray: array) -> int:
     i = 0
     j = 1
-    traversedTracksScan = 0
 
     # Create a copy of the original array for fairness assessment
-    fifoArray = np.copy(scanTestArray)
-    # indexArray = np.arange(0, scanTestArray.size, 1)
-    # fifoArray = np.vstack((indexArray, testArray))
+    idx = np.arange(0, fifoArray.size, 1)
+    fifoArray = np.vstack((idx, fifoArray))
+    fifoCopy = np.copy(fifoArray)
 
-    # Put first number in array into list
-    scanTracksList = []
-    scanTracksList.append(scanTestArray[i])
+    # Create a Scan scheduled array from original FIFO Array
+    scanTestArray = np.zeros((2,10), dtype=int)
 
-    # For every subsequent number higher than or equal to current, add it to the list
-    while j < scanTestArray.size - 1:
-        currentTrack = scanTestArray[i]
-        nextTrack = scanTestArray[j]
-    
-        if nextTrack >= currentTrack:
-            scanTracksList.append(nextTrack)
-            scanTestArray = np.delete(scanTestArray, i)
-            i = j - 1
-        else:
-            j += 1
-
-    scanTestArray = np.delete(scanTestArray, i)
-
-    # Sort remaining values in reverse order for Scan method
-    scanTestArray.sort()
-    scanTestArray = scanTestArray[::-1]
-
-    i = 0    
-    # Append remaining items to the list
-    while i < scanTestArray.size:
-        scanTracksList.append(scanTestArray[i])
-        i += 1 
-    
-    # Refresh the original array with the new list in Scan order
-    scanTestArray = np.array(scanTracksList)
-    
-    # fairnessTest(fifoArray, scanTestArray)
-    i = 0
-    fairnessTest = 0
-    while i < scanTestArray.size - 1:
-        currentTrack = scanTestArray[i]
-        nextTrack = scanTestArray[i+1]
-
-        traversedTracksScan = traversedTracksScan + abs(nextTrack - currentTrack)
-
-        i += 1
+    scanTestArray[ : ,0] = fifoArray[ : ,0]
+    fifoArray = np.delete(fifoArray, 0, 1)
 
     i = 0
     j = 0
-    fairness = 0
+    while j < fifoArray.size / 2:
+        currentTrack = scanTestArray[ : ,i]
+        nextTrack = fifoArray[ : ,j]
 
-    # Can't figure out a good way to measure fairness with respect to repeat values
-    while i < fifoArray.size:
-        while j < scanTestArray.size:
-            if fifoArray[i] == scanTestArray[j]:
-                fairness = fairness + j - i
-                break
-            j += 1
-        i += 1
-        j = 0
-
-    return traversedTracksScan
-
-def cScanTest (cScanTestArray: array) -> int:
-    i = 0
-    j = 1
-    traversedTracksCscan = 0
-
-    # Create a copy of the original array for fairness assessment
-    fifoArray = np.copy(cScanTestArray)
-
-    # Put first number in array into list
-    cScanTracksList = []
-    cScanTracksList.append(cScanTestArray[i])
-
-    # For every subsequent number higher than or equal to current, add it to the list
-    while j < cScanTestArray.size - 1:
-        currentTrack = cScanTestArray[i]
-        nextTrack = cScanTestArray[j]
-    
-        if nextTrack >= currentTrack:
-            cScanTracksList.append(nextTrack)
-            cScanTestArray = np.delete(cScanTestArray, i)
-            i = j - 1
-        else:
-            j += 1
-
-    # Delete highest remaining value, already in list
-    cScanTestArray = np.delete(cScanTestArray, i)
-
-    # Sort remaining values in reverse order for Scan method
-    cScanTestArray.sort()
-    # cScanTestArray = cScanTestArray[::-1]
-
-    i = 0    
-    # Append remaining items to the list
-    while i < cScanTestArray.size:
-        cScanTracksList.append(cScanTestArray[i])
-        i += 1 
-    
-    # Refresh the original array with the new list in Scan order
-    cScanTestArray = np.array(cScanTracksList)
-    
-    # fairnessTest(fifoArray, cScanTestArray)
-    i = 0
-    fairnessTest = 0
-    while i < cScanTestArray.size - 1:
-        currentTrack = cScanTestArray[i]
-        nextTrack = cScanTestArray[i+1]
-
-        traversedTracksCscan = traversedTracksCscan + abs(nextTrack - currentTrack)
-
-        i += 1
-
-    i = 0
-    j = 0
-    fairness = 0
-
-    # Can't figure out a good way to measure fairness with respect to repeat values
-    while i < fifoArray.size:
-        while j < cScanTestArray.size:
-            if fifoArray[i] == cScanTestArray[j]:
-                fairness = fairness + j - i
-                break
-            j += 1
-        i += 1
-        j = 0
-
-    return traversedTracksCscan
-
-def newTest(scanTest: array) -> int:
-    i = 0
-    j = 1
-    traversedTracksScan = 0
-
-    # Create a copy of the original array for fairness assessment
-    fifoArray = np.copy(scanTest)
-
-
-### START NEW SECTION WITHOUT LIST VARIABLE ###
-    newArray = np.zeros(scanTest.size, dtype=int)
-
-    newArray[0] = scanTest[0]
-    scanTest = np.delete(scanTest, 0)
-
-    i = 0
-    j = 0
-    # while i < scanTest.size:
-    while j < scanTest.size:
-        currentTrack = newArray[i]
-        nextTrack = scanTest[j]
-
-        if nextTrack >= currentTrack:
-            newArray[i + 1] = nextTrack
-            scanTest = np.delete(scanTest, j)
+        if nextTrack[1] >= currentTrack[1]:
+            scanTestArray[0,i+1] = nextTrack[0]
+            scanTestArray[1,i+1] = nextTrack[1]
+            fifoArray = np.delete(fifoArray, j, 1)
             i += 1
         else:
             j += 1
-        # i += 1
-    scanTest.sort()
-    scanTest = scanTest[::-1]
+    fifoArray = fifoArray[:, fifoArray[1, :].argsort()[::-1]]
 
+    # Add remaining values to the new Scan array in correct order
     j = 0
-    while j < scanTest.size:
-        newArray[i + 1] = scanTest[j]
+    while j < fifoArray.size / 2:
+        scanTestArray[0,i+1] = fifoArray[0,j]
+        scanTestArray[1,i+1] = fifoArray[1,j]
         j += 1
         i += 1
 
-### END NEW SECTION WITHOUT LIST VARIABLE ###
+    return fairnessTest(fifoCopy, scanTestArray)
 
-    return traversedTracksScan
+def cScanTest (fifoArray: array) -> int:
+    i = 0
+    j = 1
+
+    # Create a copy of the original array for fairness assessment
+    idx = np.arange(0, fifoArray.size, 1)
+    fifoArray = np.vstack((idx, fifoArray))
+    fifoCopy = np.copy(fifoArray)
+
+    # Create a Scan scheduled array from original FIFO Array
+    cScanTestArray = np.zeros((2,10), dtype=int)
+
+    cScanTestArray[ : ,0] = fifoArray[ : ,0]
+    fifoArray = np.delete(fifoArray, 0, 1)
+
+    i = 0
+    j = 0
+    while j < fifoArray.size / 2:
+        currentTrack = cScanTestArray[ : ,i]
+        nextTrack = fifoArray[ : ,j]
+
+        if nextTrack[1] >= currentTrack[1]:
+            cScanTestArray[0,i+1] = nextTrack[0]
+            cScanTestArray[1,i+1] = nextTrack[1]
+            fifoArray = np.delete(fifoArray, j, 1)
+            i += 1
+        else:
+            j += 1
+    fifoArray = fifoArray[:, fifoArray[1, :].argsort()]
+
+    # Add remaining values to the new Scan array in correct order
+    j = 0
+    while j < fifoArray.size / 2:
+        cScanTestArray[0,i+1] = fifoArray[0,j]
+        cScanTestArray[1,i+1] = fifoArray[1,j]
+        j += 1
+        i += 1
+
+    return fairnessTest(fifoCopy, cScanTestArray)
 
 testArray = randomGen(10)
 
@@ -210,5 +127,3 @@ print(fifoTest(testArray))
 print(scanTest(testArray))
 
 print(cScanTest(testArray))
-
-print(newTest(testArray))
