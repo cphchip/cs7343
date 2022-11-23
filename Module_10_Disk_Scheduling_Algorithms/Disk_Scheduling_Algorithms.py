@@ -1,22 +1,27 @@
 import numpy as np
 from array import array
 import random
+import matplotlib.pyplot as plt
+
 
 def randomGen(qty: int) -> array:
-    randomNumbs = np.random.randint(0,10,size=qty)
+    randomNumbs = np.random.randint(0,99,size=qty)
     print(randomNumbs)
     return randomNumbs
 
 def fairnessTest(initArray: array, testArray: array) -> tuple:
     i = 0
     traversedTracksScan = 0
+    maxWaitList = []
     while i < testArray.size / 2 - 1:
         currentTrack = testArray[1, i]
         nextTrack = testArray[1, i+1]
 
         traversedTracksScan = traversedTracksScan + abs(nextTrack - currentTrack)
-
+        maxWaitList.append(nextTrack - currentTrack)
         i += 1
+
+    maxWait = max(maxWaitList)
 
     fairnessScore = 0
     i = 0
@@ -25,6 +30,20 @@ def fairnessTest(initArray: array, testArray: array) -> tuple:
         i += 1
 
     return traversedTracksScan, fairnessScore
+
+def maxWait(testArray: array) -> int:
+    i = 0
+    maxWaitList = []
+    while i < testArray.size / 2 - 1:
+        currentTrack = testArray[1, i]
+        nextTrack = testArray[1, i+1]
+
+        maxWaitList.append(nextTrack - currentTrack)
+        i += 1
+
+    maxWait = max(maxWaitList)
+
+    return maxWait
 
 def fifoTest(fifoTestArray: array) -> int:
     i = 0
@@ -48,7 +67,7 @@ def scanTest(fifoArray: array) -> int:
     fifoCopy = np.copy(fifoArray)
 
     # Create a Scan scheduled array from original FIFO Array
-    scanTestArray = np.zeros((2,10), dtype=int)
+    scanTestArray = np.zeros((2,fifoArray.size), dtype=int)
 
     scanTestArray[ : ,0] = fifoArray[ : ,0]
     fifoArray = np.delete(fifoArray, 0, 1)
@@ -76,6 +95,8 @@ def scanTest(fifoArray: array) -> int:
         j += 1
         i += 1
 
+    print("The Scan max wait time is", maxWait(scanTestArray))
+
     return fairnessTest(fifoCopy, scanTestArray)
 
 def cScanTest (fifoArray: array) -> int:
@@ -88,7 +109,7 @@ def cScanTest (fifoArray: array) -> int:
     fifoCopy = np.copy(fifoArray)
 
     # Create a Scan scheduled array from original FIFO Array
-    cScanTestArray = np.zeros((2,10), dtype=int)
+    cScanTestArray = np.zeros((2,fifoArray.size), dtype=int)
 
     cScanTestArray[ : ,0] = fifoArray[ : ,0]
     fifoArray = np.delete(fifoArray, 0, 1)
@@ -116,14 +137,16 @@ def cScanTest (fifoArray: array) -> int:
         j += 1
         i += 1
 
+    print("The cScan max wait time is", maxWait(cScanTestArray))
+
     return fairnessTest(fifoCopy, cScanTestArray)
 
-testArray = randomGen(10)
+testArray = randomGen(20)
 
 print(fifoTest(testArray))
 
 # sstfTest
 
-print(scanTest(testArray))
+print("Scan traversed tracks and Fairness are: ", scanTest(testArray))
 
-print(cScanTest(testArray))
+print("C-scan traversed tracks and Fairness are: ", cScanTest(testArray))
